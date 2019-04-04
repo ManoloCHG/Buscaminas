@@ -2,7 +2,7 @@ package minesweeper;
 
 
 
-public class Cell 
+public class celda 
 {
     private boolean mine;
 
@@ -23,7 +23,7 @@ public class Cell
     
     //----------------------------------------------------------//
 
-    public Cell()
+    public celda()
     {
         mine = false;
         content = "";

@@ -20,100 +20,104 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.util.Pair;
 import javax.swing.border.TitledBorder;
-import minesweeper.Score.Time;
+import minesweeper.Puntuacion.Time;
 
 
 
 // This is the main controller class
-public class Game implements MouseListener, ActionListener, WindowListener
+public class Juego implements MouseListener, ActionListener, WindowListener
 {
     public static String dbPath;
     // "playing" indicates whether a game is running (true) or not (false).
-    private boolean playing; 
+    private boolean jugando; 
 
-    private Board board;
+    private Tabla tabla;
 
-    private UI gui;
+    private UI pepe;
     
-    private Score score;
+    private Puntuacion puntuacion;
         
     //------------------------------------------------------------------//        
 
-    public Game()
+    /**
+     *
+     */
+
+    public Juego()
     {
         // set db path
         String p = "";
 
         try 
         {
-            p = new File(Game.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getPath() + "\\db.accdb";
+            p = new File(Juego.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getPath() + "\\db.accdb";
         }
         catch (URISyntaxException ex) 
         {
-            System.out.println("Error loading database file.");
+            System.out.println("Error al cargar el archivo de base de datos.");
         }
 
         dbPath =   "jdbc:ucanaccess://" + p;
 
         
-        score = new Score();
-        score.populate();
+        puntuacion = new Puntuacion();
+        puntuacion.populate();
         
         UI.setLook("Nimbus");
                         
-        createBoard();
+        creartabla();
         
-        this.gui = new UI(board.getRows(), board.getCols(), board.getNumberOfMines());        
-        this.gui.setButtonListeners(this);
+        this.pepe = new UI(tabla.getRows(), tabla.getCols(), tabla.getNumberOfMines());        
+        this.pepe.setButtonListeners(this);
                         
-        this.playing = false;
+        this.jugando = false;
         
-        gui.setVisible(true);
+        pepe.setVisible(true);
         
-        gui.setIcons();        
-        gui.hideAll();
+        pepe.setIcons();        
+        pepe.hideAll();
         
-        resumeGame();
+        resumenJuego();
     }
 
     //-----------------Load Save Game (if any)--------------------------//
     
-    public void resumeGame()
+    public void resumenJuego()
     {
-        if(board.checkSave())
+        if(tabla.checkSave())
         {
             ImageIcon question = new ImageIcon(getClass().getResource("/resources/question.png"));      
 
-            int option = JOptionPane.showOptionDialog(null, "Do you want to continue your saved game?", 
-                            "Saved Game Found", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, question,null,null);
+            int option = JOptionPane.showOptionDialog(null, "¿Quieres continuar con el juego anterior?", 
+                            "Juego guardado encontrado", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, question,null,null);
 
             switch(option) 
             {
                 case JOptionPane.YES_OPTION:      
       
                     //load board's state
-                    Pair p = board.loadSaveGame();
+                    Pair p = tabla.loadSaveGame();
                     
                     //set button's images
-                    setButtonImages();
+                    establecerimagenesbotones();
                     
                     //load timer's value                                        
-                    gui.setTimePassed((int)p.getKey());
+                    pepe.setTimePassed((int)p.getKey());
 
                     //load mines value
-                    gui.setMines((int)p.getValue());
+                    pepe.setMines((int)p.getValue());
                     
-                    gui.startTimer();
+                    pepe.startTimer();
                     
-                    playing = true;
+                    jugando = true;
                     break;
 
                 case JOptionPane.NO_OPTION:
-                    board.deleteSavedGame();
+                    tabla.deleteSavedGame();
                     break;
                     
                 case JOptionPane.CLOSED_OPTION:
-                    board.deleteSavedGame();
+                    tabla.deleteSavedGame();
                     break;
             }
         }
@@ -121,24 +125,24 @@ public class Game implements MouseListener, ActionListener, WindowListener
 
 
     //-------------------------------------------------//
-    public void setButtonImages()
+    public void establecerimagenesbotones()
     {
-        Cell cells[][] = board.getCells();
-        JButton buttons[][] = gui.getButtons();
+        celda cells[][] = tabla.getCells();
+        JButton buttons[][] = pepe.getButtons();
         
-        for( int y=0 ; y<board.getRows() ; y++ ) 
+        for( int y=0 ; y<tabla.getRows() ; y++ ) 
         {
-            for( int x=0 ; x<board.getCols() ; x++ ) 
+            for( int x=0 ; x<tabla.getCols() ; x++ ) 
             {
                 buttons[x][y].setIcon(null);
                 
                 if (cells[x][y].getContent().equals(""))
                 {
-                    buttons[x][y].setIcon(gui.getIconTile());
+                    buttons[x][y].setIcon(pepe.getIconTile());
                 }
                 else if (cells[x][y].getContent().equals("F"))
                 {
-                    buttons[x][y].setIcon(gui.getIconFlag());
+                    buttons[x][y].setIcon(pepe.getIconFlag());
                     buttons[x][y].setBackground(Color.blue);	                    
                 }
                 else if (cells[x][y].getContent().equals("0"))
@@ -149,7 +153,7 @@ public class Game implements MouseListener, ActionListener, WindowListener
                 {
                     buttons[x][y].setBackground(Color.lightGray);                    
                     buttons[x][y].setText(cells[x][y].getContent());
-                    gui.setTextColor(buttons[x][y]);                                        
+                    pepe.setTextColor(buttons[x][y]);                                        
                 }
             }
         }
@@ -158,7 +162,7 @@ public class Game implements MouseListener, ActionListener, WindowListener
     
     //------------------------------------------------------------//
         
-    public void createBoard()
+    public void creartabla()
     {
         // Create a new board        
         int mines = 10;
@@ -166,95 +170,95 @@ public class Game implements MouseListener, ActionListener, WindowListener
         int r = 9;
         int c = 9;
                 
-        this.board = new Board(mines, r, c);        
+        this.tabla = new Tabla(mines, r, c);        
     }
     
 
     //---------------------------------------------------------------//
-    public void newGame()
+    public void nuevoJuego()
     {                
-        this.playing = false;        
+        this.jugando = false;        
                                 
-        createBoard();
+        creartabla();
         
-        gui.interruptTimer();
-        gui.resetTimer();        
-        gui.initGame();
-        gui.setMines(board.getNumberOfMines());
+        pepe.interruptTimer();
+        pepe.resetTimer();        
+        pepe.initGame();
+        pepe.setMines(tabla.getNumberOfMines());
     }
     //------------------------------------------------------------------------------//
     
-    public void restartGame()
+    public void reiniciarJuego()
     {
-        this.playing = false;
+        this.jugando = false;
         
-        board.resetBoard();
+        tabla.resetBoard();
         
-        gui.interruptTimer();
-        gui.resetTimer();        
-        gui.initGame();
-        gui.setMines(board.getNumberOfMines());
+        pepe.interruptTimer();
+        pepe.resetTimer();        
+        pepe.initGame();
+        pepe.setMines(tabla.getNumberOfMines());
     }
         
     //------------------------------------------------------------------------------//    
-    private void endGame()
+    private void finJuego()
     {
-        playing = false;
-        showAll();
+        jugando = false;
+        MostrarTodo();
 
-        score.save();
+        puntuacion.save();
     }
 
     
     //-------------------------GAME WON AND GAME LOST ---------------------------------//
     
-    public void gameWon()
+    public void JuegoGanado()
     {
-        score.incCurrentStreak();
-        score.incCurrentWinningStreak();
-        score.incGamesWon();
-        score.incGamesPlayed();
+        puntuacion.incCurrentStreak();
+        puntuacion.incCurrentWinningStreak();
+        puntuacion.incGamesWon();
+        puntuacion.incGamesPlayed();
         
-        gui.interruptTimer();
-        endGame();
+        pepe.interruptTimer();
+        finJuego();
         //----------------------------------------------------------------//
         
         
-        JDialog dialog = new JDialog(gui, Dialog.ModalityType.DOCUMENT_MODAL);
+        JDialog dialog = new JDialog(pepe, Dialog.ModalityType.DOCUMENT_MODAL);
         
         //------MESSAGE-----------//
-        JLabel message = new JLabel("Congratulations, you won the game!", SwingConstants.CENTER);
+        JLabel message = new JLabel("Congratulaciones, Has ganado", SwingConstants.CENTER);
                 
         //-----STATISTICS-----------//
         JPanel statistics = new JPanel();
         statistics.setLayout(new GridLayout(6,1,0,10));
         
-        ArrayList<Time> bTimes = score.getBestTimes();
+        ArrayList<Time> bTimes = puntuacion.getBestTimes();
         
-        if (bTimes.isEmpty() || (bTimes.get(0).getTimeValue() > gui.getTimePassed()))
+        if (bTimes.isEmpty() || (bTimes.get(0).getTimeValue() > pepe.getTimePassed()))
         {
-            statistics.add(new JLabel("    You have the fastest time for this difficulty level!    "));
+            statistics.add(new JLabel("    obtubiste el mejor tiempo para este nivel de dificultad    "));
         }
         
-        score.addTime(gui.getTimePassed(), new Date(System.currentTimeMillis()));
+        puntuacion.addTime(pepe.getTimePassed(), new Date(System.currentTimeMillis()));
                 
-        JLabel time = new JLabel("  Time:  " + Integer.toString(gui.getTimePassed()) + " seconds            Date:  " + new Date(System.currentTimeMillis()));
+        JLabel time = new JLabel("  Tiempo:  " + Integer.toString(pepe.getTimePassed()) + " segundos            Fecha:  " + new Date(System.currentTimeMillis()));
         
         JLabel bestTime = new JLabel();
         
         
         if (bTimes.isEmpty())
         {
-            bestTime.setText("  Best Time:  ---                  Date:  ---");
+            bestTime.setText("  Mejor Tiempo:  ---                  Fecha:  ---");
         }
         else
         {
-            bestTime.setText("  Best Time:  " + bTimes.get(0).getTimeValue() + " seconds            Date:  " + bTimes.get(0).getDateValue());
+            bestTime.setText("  Mejor Tiempo:  " + bTimes.get(0).getTimeValue() + " segundos            Fecha:  " + bTimes.get(0).getDateValue());
         }
         
-        JLabel gPlayed = new JLabel("  Games Played:  " + score.getGamesPlayed());
-        JLabel gWon = new JLabel("  Games Won:  " + score.getGamesWon());
-        JLabel gPercentage = new JLabel("  Win Percentage:  " + score.getWinPercentage() + "%");
+        JLabel gPlayed = new JLabel("  Partidas Jugadas:  " + puntuacion.getGamesPlayed());
+        JLabel gWon = new JLabel("  Partidas Ganadas:  " + puntuacion.getGamesWon());
+        JLabel gPercentage = new JLabel("  Win Percentage:  " + puntuacion.getWinPercentage() + "%");
         
         statistics.add(time);
         statistics.add(bestTime);
@@ -270,8 +274,8 @@ public class Game implements MouseListener, ActionListener, WindowListener
         JPanel buttons = new JPanel();
         buttons.setLayout(new GridLayout(1,2,10,0));
         
-        JButton exit = new JButton("Exit");
-        JButton playAgain = new JButton("Play Again");
+        JButton exit = new JButton("Salir");
+        JButton playAgain = new JButton("Jugar de nuevo");
 
         
         exit.addActionListener((ActionEvent e) -> {
@@ -280,7 +284,7 @@ public class Game implements MouseListener, ActionListener, WindowListener
         });        
         playAgain.addActionListener((ActionEvent e) -> {
             dialog.dispose();            
-            newGame();
+            nuevoJuego();
         });        
         
         
@@ -302,44 +306,44 @@ public class Game implements MouseListener, ActionListener, WindowListener
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
                     dialog.dispose();
-                    newGame();
+                    nuevoJuego();
             }
             }
         );
 
-        dialog.setTitle("Game Won");
+        dialog.setTitle("Partida Ganada");
         dialog.add(c);
         dialog.pack();
-        dialog.setLocationRelativeTo(gui);
+        dialog.setLocationRelativeTo(pepe);
         dialog.setVisible(true);                        
     }
     
-    public void gameLost()
+    public void JugoPerdido()
     {
-        score.decCurrentStreak();
-        score.incCurrentLosingStreak();
-        score.incGamesPlayed();
+        puntuacion.decCurrentStreak();
+        puntuacion.incCurrentLosingStreak();
+        puntuacion.incGamesPlayed();
         
-        gui.interruptTimer();
+        pepe.interruptTimer();
         
-        endGame();
+        finJuego();
         
         //----------------------------------------------------------------//
 
-        JDialog dialog = new JDialog(gui, Dialog.ModalityType.DOCUMENT_MODAL);
+        JDialog dialog = new JDialog(pepe, Dialog.ModalityType.DOCUMENT_MODAL);
         
         //------MESSAGE-----------//
-        JLabel message = new JLabel("Sorry, you lost this game. Better luck next time!", SwingConstants.CENTER);
+        JLabel message = new JLabel("Lo sientos, perdiste el juego. Mejor prueva con el tetris!", SwingConstants.CENTER);
                 
         //-----STATISTICS-----------//
         JPanel statistics = new JPanel();
         statistics.setLayout(new GridLayout(5,1,0,10));
         
-        JLabel time = new JLabel("  Time:  " + Integer.toString(gui.getTimePassed()) + " seconds");
+        JLabel time = new JLabel("  Tiempo:  " + Integer.toString(pepe.getTimePassed()) + " segundos");
         
         JLabel bestTime = new JLabel();
         
-        ArrayList<Time> bTimes = score.getBestTimes();
+        ArrayList<Time> bTimes = puntuacion.getBestTimes();
         
         if (bTimes.isEmpty())
         {
@@ -347,12 +351,12 @@ public class Game implements MouseListener, ActionListener, WindowListener
         }
         else
         {
-            bestTime.setText("  Best Time:  " + bTimes.get(0).getTimeValue() + " seconds            Date:  " + bTimes.get(0).getDateValue());
+            bestTime.setText("  Mejor Tiempo:  " + bTimes.get(0).getTimeValue() + " segundos            Fecha:  " + bTimes.get(0).getDateValue());
         }
         
-        JLabel gPlayed = new JLabel("  Games Played:  " + score.getGamesPlayed());
-        JLabel gWon = new JLabel("  Games Won:  " + score.getGamesWon());
-        JLabel gPercentage = new JLabel("  Win Percentage:  " + score.getWinPercentage() + "%");
+        JLabel gPlayed = new JLabel("   Partidas Jugadas:  " + puntuacion.getGamesPlayed());
+        JLabel gWon = new JLabel("  Partidads ganadas:  " + puntuacion.getGamesWon());
+        JLabel gPercentage = new JLabel("  Porcentaje de victoria:  " + puntuacion.getWinPercentage() + "%");
         
         statistics.add(time);
         statistics.add(bestTime);
@@ -368,9 +372,9 @@ public class Game implements MouseListener, ActionListener, WindowListener
         JPanel buttons = new JPanel();
         buttons.setLayout(new GridLayout(1,3,2,0));
         
-        JButton exit = new JButton("Exit");
-        JButton restart = new JButton("Restart");
-        JButton playAgain = new JButton("Play Again");
+        JButton exit = new JButton("Salida");
+        JButton restart = new JButton("Reiniciar");
+        JButton playAgain = new JButton("Jugar de Nuevo");
 
         
         exit.addActionListener((ActionEvent e) -> {
@@ -379,11 +383,11 @@ public class Game implements MouseListener, ActionListener, WindowListener
         });        
         restart.addActionListener((ActionEvent e) -> {
             dialog.dispose();            
-            restartGame();
+            reiniciarJuego();
         });        
         playAgain.addActionListener((ActionEvent e) -> {
             dialog.dispose();            
-            newGame();
+            nuevoJuego();
         });        
         
         
@@ -406,32 +410,32 @@ public class Game implements MouseListener, ActionListener, WindowListener
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
                     dialog.dispose();
-                    newGame();
+                    nuevoJuego();
             }
             }
         );
         
-        dialog.setTitle("Game Lost");
+        dialog.setTitle("Derrota");
         dialog.add(c);
         dialog.pack();
-        dialog.setLocationRelativeTo(gui);
+        dialog.setLocationRelativeTo(pepe);
         dialog.setVisible(true);        
     }
     
     
     //--------------------------------SCORE BOARD--------------------------------------//
-    public void showScore()
+    public void MostrarPuntuacion()
     {
         //----------------------------------------------------------------//
                 
-        JDialog dialog = new JDialog(gui, Dialog.ModalityType.DOCUMENT_MODAL);
+        JDialog dialog = new JDialog(pepe, Dialog.ModalityType.DOCUMENT_MODAL);
 
         //-----BEST TIMES--------//
         
         JPanel bestTimes = new JPanel();
         bestTimes.setLayout(new GridLayout(5,1));
         
-        ArrayList<Time> bTimes = score.getBestTimes();
+        ArrayList<Time> bTimes = puntuacion.getBestTimes();
         
         for (int i = 0; i < bTimes.size(); i++)
         {
@@ -445,7 +449,7 @@ public class Game implements MouseListener, ActionListener, WindowListener
             bestTimes.add(t);
         }
         
-        TitledBorder b = BorderFactory.createTitledBorder("Best Times");
+        TitledBorder b = BorderFactory.createTitledBorder("Mejores Tiempos");
         b.setTitleJustification(TitledBorder.LEFT);
 
         bestTimes.setBorder(b);
@@ -455,12 +459,12 @@ public class Game implements MouseListener, ActionListener, WindowListener
         
         statistics.setLayout(new GridLayout(6,1,0,10));        
         
-        JLabel gPlayed = new JLabel("  Games Played:  " + score.getGamesPlayed());
-        JLabel gWon = new JLabel("  Games Won:  " + score.getGamesWon());
-        JLabel gPercentage = new JLabel("  Win Percentage:  " + score.getWinPercentage() + "%");
-        JLabel lWin = new JLabel("  Longest Winning Streak:  " + score.getLongestWinningStreak());
-        JLabel lLose = new JLabel("  Longest Losing Streak:  " + score.getLongestLosingStreak());
-        JLabel currentStreak = new JLabel("  Current Streak:  " + score.getCurrentStreak());
+        JLabel gPlayed = new JLabel("  Partidas Jugadas:  " + puntuacion.getGamesPlayed());
+        JLabel gWon = new JLabel("  Juegos Ganados:  " + puntuacion.getGamesWon());
+        JLabel gPercentage = new JLabel("  Porcentaje de victoria:  " + puntuacion.getWinPercentage() + "%");
+        JLabel lWin = new JLabel("Mayor racha de victorias:  " + puntuacion.getLongestWinningStreak());
+        JLabel lLose = new JLabel("Mayor Racha de derrotas:  " + puntuacion.getLongestLosingStreak());
+        JLabel currentStreak = new JLabel("Racha actual:  " + puntuacion.getCurrentStreak());
 
         
         statistics.add(gPlayed);
@@ -478,8 +482,8 @@ public class Game implements MouseListener, ActionListener, WindowListener
         JPanel buttons = new JPanel();
         buttons.setLayout(new GridLayout(1,2,10,0));
         
-        JButton close = new JButton("Close");
-        JButton reset = new JButton("Reset");
+        JButton close = new JButton("Cerrar");
+        JButton reset = new JButton("Reiniciar");
 
         
         close.addActionListener((ActionEvent e) -> {
@@ -488,17 +492,17 @@ public class Game implements MouseListener, ActionListener, WindowListener
         reset.addActionListener((ActionEvent e) -> {
             ImageIcon question = new ImageIcon(getClass().getResource("/resources/question.png"));      
 
-            int option = JOptionPane.showOptionDialog(null, "Do you want to reset all your statistics to zero?", 
+            int option = JOptionPane.showOptionDialog(null, "¿Quieres restablecer todas las estadisticas a cero?", 
                             "Reset Statistics", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, question,null,null);
 
             switch(option) 
             {
                 case JOptionPane.YES_OPTION:      
 
-                    score.resetScore();
-                    score.save();
+                    puntuacion.resetScore();
+                    puntuacion.save();
                     dialog.dispose();
-                    showScore();
+                    MostrarPuntuacion();
                     break;
 
                 case JOptionPane.NO_OPTION: 
@@ -509,7 +513,7 @@ public class Game implements MouseListener, ActionListener, WindowListener
         buttons.add(close);
         buttons.add(reset);
         
-        if (score.getGamesPlayed() == 0)
+        if (puntuacion.getGamesPlayed() == 0)
             reset.setEnabled(false);
         
         //--------DIALOG-------------//
@@ -525,7 +529,7 @@ public class Game implements MouseListener, ActionListener, WindowListener
         dialog.setTitle("Minesweeper Statistics - Haris Muneer");
         dialog.add(c);
         dialog.pack();
-        dialog.setLocationRelativeTo(gui);
+        dialog.setLocationRelativeTo(pepe);
         dialog.setVisible(true);                        
     }
     
@@ -533,16 +537,16 @@ public class Game implements MouseListener, ActionListener, WindowListener
 	
         
     // Shows the "solution" of the game.
-    private void showAll()
+    private void MostrarTodo()
     {
         String cellSolution;
         
-        Cell cells[][] = board.getCells();
-        JButton buttons[][] = gui.getButtons();
+        celda cells[][] = tabla.getCells();
+        JButton buttons[][] = pepe.getButtons();
 
-        for (int x=0; x<board.getCols(); x++ ) 
+        for (int x=0; x<tabla.getCols(); x++ ) 
         {
-            for (int y=0; y<board.getRows(); y++ ) 
+            for (int y=0; y<tabla.getRows(); y++ ) 
             {
                 cellSolution = cells[x][y].getContent();
 
@@ -560,7 +564,7 @@ public class Game implements MouseListener, ActionListener, WindowListener
                         cellSolution = "M";
                         
                         //mine
-                        buttons[x][y].setIcon(gui.getIconMine());
+                        buttons[x][y].setIcon(pepe.getIconMine());
                         buttons[x][y].setBackground(Color.lightGray);                        
                     }
                     else
@@ -574,7 +578,7 @@ public class Game implements MouseListener, ActionListener, WindowListener
                         {
                             buttons[x][y].setBackground(Color.lightGray);
                             buttons[x][y].setText(cellSolution);
-                            gui.setTextColor(buttons[x][y]);
+                            pepe.setTextColor(buttons[x][y]);
                         }
                     }
                 }
@@ -611,11 +615,11 @@ public class Game implements MouseListener, ActionListener, WindowListener
         boolean isFinished = true;
         String cellSolution;
 
-        Cell cells[][] = board.getCells();
+        celda cells[][] = tabla.getCells();
         
-        for( int x = 0 ; x < board.getCols() ; x++ ) 
+        for( int x = 0 ; x < tabla.getCols() ; x++ ) 
         {
-            for( int y = 0 ; y < board.getRows() ; y++ ) 
+            for( int y = 0 ; y < tabla.getRows() ; y++ ) 
             {
                 // If a game is solved, the content of each Cell should match the value of its surrounding mines
                 cellSolution = Integer.toString(cells[x][y].getSurroundingMines());
@@ -642,7 +646,7 @@ public class Game implements MouseListener, ActionListener, WindowListener
     {		
         if(isFinished()) 
         {            
-            gameWon();
+            JuegoGanado();
         }
     }
    
@@ -657,14 +661,14 @@ public class Game implements MouseListener, ActionListener, WindowListener
     {
         int neighbours;
         
-        Cell cells[][] = board.getCells();
-        JButton buttons[][] = gui.getButtons();
+        celda cells[][] = tabla.getCells();
+        JButton buttons[][] = pepe.getButtons();
 
         // Columns
-        for(int x = board.makeValidCoordinateX(xCo - 1) ; x <= board.makeValidCoordinateX(xCo + 1) ; x++) 
+        for(int x = tabla.makeValidCoordinateX(xCo - 1) ; x <= tabla.makeValidCoordinateX(xCo + 1) ; x++) 
         {			
             // Rows
-            for(int y = board.makeValidCoordinateY(yCo - 1) ; y <= board.makeValidCoordinateY(yCo + 1) ; y++) 
+            for(int y = tabla.makeValidCoordinateY(yCo - 1) ; y <= tabla.makeValidCoordinateY(yCo + 1) ; y++) 
             {
                 // Only unrevealed cells need to be revealed.
                 if(cells[x][y].getContent().equals("")) 
@@ -691,7 +695,7 @@ public class Game implements MouseListener, ActionListener, WindowListener
                         // No, give it a boring gray color.
                         buttons[x][y].setBackground(Color.lightGray);
                         buttons[x][y].setText(Integer.toString(neighbours));
-                        gui.setTextColor(buttons[x][y]);                        
+                        pepe.setTextColor(buttons[x][y]);                        
                     }
                 }
             }
@@ -702,7 +706,7 @@ public class Game implements MouseListener, ActionListener, WindowListener
     @Override
     public void windowClosing(WindowEvent e) 
     {
-        if (playing)
+        if (jugando)
         {
             ImageIcon question = new ImageIcon(getClass().getResource("/resources/question.png"));      
 
@@ -716,10 +720,10 @@ public class Game implements MouseListener, ActionListener, WindowListener
                 //save
                 case JOptionPane.YES_OPTION:
                     
-                    gui.interruptTimer();
-                    score.save();
+                    pepe.interruptTimer();
+                    puntuacion.save();
                     
-                    JDialog dialog = new JDialog(gui, Dialog.ModalityType.DOCUMENT_MODAL);
+                    JDialog dialog = new JDialog(pepe, Dialog.ModalityType.DOCUMENT_MODAL);
                     JPanel panel = new JPanel();
                     panel.setLayout(new BorderLayout());
                     panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -727,14 +731,14 @@ public class Game implements MouseListener, ActionListener, WindowListener
                     dialog.add(panel);
                     dialog.setTitle("Saving Game...");
                     dialog.pack();
-                    dialog.setLocationRelativeTo(gui);                    
+                    dialog.setLocationRelativeTo(pepe);                    
                     dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
                     
                     SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>(){
                        @Override
                        protected Void doInBackground() throws Exception 
                        {
-                            board.saveGame(gui.getTimePassed(), gui.getMines());                
+                            tabla.saveGame(pepe.getTimePassed(), pepe.getMines());                
                             return null;
                        }
                        
@@ -752,8 +756,8 @@ public class Game implements MouseListener, ActionListener, WindowListener
                 
                 //dont save                    
                 case JOptionPane.NO_OPTION:
-                    score.incGamesPlayed();
-                    score.save();
+                    puntuacion.incGamesPlayed();
+                    puntuacion.save();
                     System.exit(0);
                     break;
                     
@@ -772,7 +776,7 @@ public class Game implements MouseListener, ActionListener, WindowListener
 
         if (menuItem.getName().equals("New Game"))
         {
-            if (playing)
+            if (jugando)
             {
                 ImageIcon question = new ImageIcon(getClass().getResource("/resources/question.png"));      
 
@@ -786,15 +790,15 @@ public class Game implements MouseListener, ActionListener, WindowListener
                     case JOptionPane.YES_OPTION:      
                         
                         // Initialize the new game.
-                        newGame();
-                        score.incGamesPlayed();
-                        score.save();
+                        nuevoJuego();
+                        puntuacion.incGamesPlayed();
+                        puntuacion.save();
                         break;
 
                     case JOptionPane.NO_OPTION: 
-                        score.incGamesPlayed();   
-                        score.save();
-                        restartGame();
+                        puntuacion.incGamesPlayed();   
+                        puntuacion.save();
+                        reiniciarJuego();
                         break;
                     
                     case JOptionPane.CANCEL_OPTION: break;
@@ -810,7 +814,7 @@ public class Game implements MouseListener, ActionListener, WindowListener
         //Statistics
         else
         {
-            showScore();
+            MostrarPuntuacion();
         }        
     }
     
@@ -822,13 +826,13 @@ public class Game implements MouseListener, ActionListener, WindowListener
     public void mouseClicked(MouseEvent e)
     {
         // start timer on first click
-        if(!playing)
+        if(!jugando)
         {
-            gui.startTimer();
-            playing = true;
+            pepe.startTimer();
+            jugando = true;
         }
         
-        if (playing)
+        if (jugando)
         {
             //Get the button's name
             JButton button = (JButton)e.getSource();
@@ -840,13 +844,13 @@ public class Game implements MouseListener, ActionListener, WindowListener
             int y = Integer.parseInt(co[1]);
 
             // Get cell information.
-            boolean isMine = board.getCells()[x][y].getMine();
-            int neighbours = board.getCells()[x][y].getSurroundingMines();
+            boolean isMine = tabla.getCells()[x][y].getMine();
+            int neighbours = tabla.getCells()[x][y].getSurroundingMines();
 
             // Left Click
             if (SwingUtilities.isLeftMouseButton(e)) 
             {
-                if (!board.getCells()[x][y].getContent().equals("F"))
+                if (!tabla.getCells()[x][y].getContent().equals("F"))
                 {
                     button.setIcon(null);
 
@@ -854,18 +858,18 @@ public class Game implements MouseListener, ActionListener, WindowListener
                     if(isMine) 
                     {  
                         //red mine
-                        button.setIcon(gui.getIconRedMine());
+                        button.setIcon(pepe.getIconRedMine());
                         button.setBackground(Color.red);
-                        board.getCells()[x][y].setContent("M");
+                        tabla.getCells()[x][y].setContent("M");
 
-                        gameLost();
+                        JugoPerdido();
                     }
                     else 
                     {
                         // The player has clicked on a number.
-                        board.getCells()[x][y].setContent(Integer.toString(neighbours));
+                        tabla.getCells()[x][y].setContent(Integer.toString(neighbours));
                         button.setText(Integer.toString(neighbours));
-                        gui.setTextColor(button);
+                        pepe.setTextColor(button);
 
                         if( neighbours == 0 ) 
                         {
@@ -884,24 +888,24 @@ public class Game implements MouseListener, ActionListener, WindowListener
             // Right Click
             else if (SwingUtilities.isRightMouseButton(e)) 
             {
-                if(board.getCells()[x][y].getContent().equals("F")) 
+                if(tabla.getCells()[x][y].getContent().equals("F")) 
                 {   
-                    board.getCells()[x][y].setContent("");
+                    tabla.getCells()[x][y].setContent("");
                     button.setText("");
                     button.setBackground(new Color(0,110,140));
 
                     //simple blue
 
-                    button.setIcon(gui.getIconTile());
-                    gui.incMines();
+                    button.setIcon(pepe.getIconTile());
+                    pepe.incMines();
                 }
-                else if (board.getCells()[x][y].getContent().equals("")) 
+                else if (tabla.getCells()[x][y].getContent().equals("")) 
                 {
-                    board.getCells()[x][y].setContent("F");
+                    tabla.getCells()[x][y].setContent("F");
                     button.setBackground(Color.blue);	
 
-                    button.setIcon(gui.getIconFlag());
-                    gui.decMines();
+                    button.setIcon(pepe.getIconFlag());
+                    pepe.decMines();
                 }
             }
 

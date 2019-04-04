@@ -10,24 +10,24 @@ import javafx.util.Pair;
 
 
 
-public class Board 
+public class Tabla 
 {
-    private int numberOfMines;	
-    private Cell cells[][];
+    private int numeroDeMinas;	
+    private celda[][] celdas;
 
-    private int rows;
-    private int cols;
+    private int fila;
+    private int columna;
 
         
     //---------------------------------------------//
     
-    public Board(int numberOfMines, int r, int c)
+    public Tabla(int numberOfMines, int r, int c)
     {
-        this.rows = r;
-        this.cols = c;
-        this.numberOfMines = numberOfMines;
+        this.fila = r;
+        this.columna = c;
+        this.numeroDeMinas = numberOfMines;
 
-        cells = new Cell[rows][cols];
+        celdas = new celda[fila][columna];
 
         //Step 1: First create a board with empty Cells
         createEmptyCells();         
@@ -44,11 +44,11 @@ public class Board
     //STEP 1//
     public void createEmptyCells()
     {
-        for (int x = 0; x < cols; x++)
+        for (int x = 0; x < columna; x++)
         {
-            for (int y = 0; y < rows; y++)
+            for (int y = 0; y < fila; y++)
             {
-                cells[x][y] = new Cell();
+                celdas[x][y] = new celda();
             }
         }
     }
@@ -61,19 +61,19 @@ public class Board
         boolean hasMine;
         int currentMines = 0;                
 
-        while (currentMines != numberOfMines)
+        while (currentMines != numeroDeMinas)
         {
             // Generate a random x coordinate (between 0 and cols)
-            x = (int)Math.floor(Math.random() * cols);
+            x = (int)Math.floor(Math.random() * columna);
 
             // Generate a random y coordinate (between 0 and rows)
-            y = (int)Math.floor(Math.random() * rows);
+            y = (int)Math.floor(Math.random() * fila);
 
-            hasMine = cells[x][y].getMine();
+            hasMine = celdas[x][y].getMine();
 
             if(!hasMine)
             {		
-                cells[x][y].setMine(true);
+                celdas[x][y].setMine(true);
                 currentMines++;	
             }			
         }
@@ -84,11 +84,11 @@ public class Board
     //STEP 3//
     public void setSurroundingMinesNumber()
     {	
-        for(int x = 0 ; x < cols ; x++) 
+        for(int x = 0 ; x < columna ; x++) 
         {
-            for(int y = 0 ; y < rows ; y++) 
+            for(int y = 0 ; y < fila ; y++) 
             {
-                cells[x][y].setSurroundingMines(calculateNeighbours(x,y));                        
+                celdas[x][y].setSurroundingMines(calculateNeighbours(x,y));                        
             }
         }
     }
@@ -112,7 +112,7 @@ public class Board
             {
                 // Skip (xCo, yCo), since that's no neighbour.
                 if(x != xCo || y != yCo)
-                    if(cells[x][y].getMine())   // If the neighbour contains a mine, neighbours++.
+                    if(celdas[x][y].getMine())   // If the neighbour contains a mine, neighbours++.
                         neighbours++;
             }
         }
@@ -127,8 +127,8 @@ public class Board
     {
         if (i < 0)
             i = 0;
-        else if (i > cols-1)
-            i = cols-1;
+        else if (i > columna-1)
+            i = columna-1;
 
         return i;
     }	
@@ -138,8 +138,8 @@ public class Board
     {
         if (i < 0)
             i = 0;
-        else if (i > rows-1)
-            i = rows-1;
+        else if (i > fila-1)
+            i = fila-1;
 
         return i;
     }	
@@ -158,7 +158,7 @@ public class Board
         boolean saveExists = false;
 
         try {
-            String dbURL = Game.dbPath; 
+            String dbURL = Juego.dbPath; 
             
             connection = DriverManager.getConnection(dbURL); 
             statement = connection.createStatement();
@@ -195,7 +195,7 @@ public class Board
         ResultSet resultSet = null;
 
         try {
-            String dbURL = Game.dbPath; 
+            String dbURL = Juego.dbPath; 
             
             connection = DriverManager.getConnection(dbURL); 
             
@@ -203,15 +203,15 @@ public class Board
             statement = connection.createStatement();
             resultSet = statement.executeQuery("SELECT * FROM CELL");
 
-            for(int x = 0 ; x < cols ; x++) 
+            for(int x = 0 ; x < columna ; x++) 
             {
-                for(int y = 0 ; y < rows ; y++) 
+                for(int y = 0 ; y < fila ; y++) 
                 {                                        
                     resultSet.next();
                     
-                    cells[x][y].setContent(resultSet.getString("CONTENT"));
-                    cells[x][y].setMine(resultSet.getBoolean("MINE"));
-                    cells[x][y].setSurroundingMines(resultSet.getInt("SURROUNDING_MINES"));                    
+                    celdas[x][y].setContent(resultSet.getString("CONTENT"));
+                    celdas[x][y].setMine(resultSet.getBoolean("MINE"));
+                    celdas[x][y].setSurroundingMines(resultSet.getInt("SURROUNDING_MINES"));                    
                 }
             }
             
@@ -254,7 +254,7 @@ public class Board
         PreparedStatement statement = null;
         
         try {
-            String dbURL = Game.dbPath; 
+            String dbURL = Juego.dbPath; 
             
             connection = DriverManager.getConnection(dbURL); 
 
@@ -288,7 +288,7 @@ public class Board
         PreparedStatement statement = null;
         
         try {
-            String dbURL = Game.dbPath; 
+            String dbURL = Juego.dbPath; 
             
             connection = DriverManager.getConnection(dbURL); 
 
@@ -297,13 +297,13 @@ public class Board
             String template = "INSERT INTO CELL (CONTENT, MINE, SURROUNDING_MINES) values (?,?,?)";
             statement = connection.prepareStatement(template);
 
-            for(int x = 0 ; x < cols ; x++) 
+            for(int x = 0 ; x < columna ; x++) 
             {
-                for(int y = 0 ; y < rows ; y++) 
+                for(int y = 0 ; y < fila ; y++) 
                 {
-                    statement.setString(1, cells[x][y].getContent());
-                    statement.setBoolean(2, cells[x][y].getMine());
-                    statement.setInt(3, (int)cells[x][y].getSurroundingMines());                    
+                    statement.setString(1, celdas[x][y].getContent());
+                    statement.setBoolean(2, celdas[x][y].getMine());
+                    statement.setInt(3, (int)celdas[x][y].getSurroundingMines());                    
 
                     statement.executeUpdate();
                 }
@@ -340,37 +340,37 @@ public class Board
     //---------GETTERS AND SETTERS-------------//
     public void setNumberOfMines(int numberOfMines)
     {
-        this.numberOfMines = numberOfMines;
+        this.numeroDeMinas = numberOfMines;
     }
 
     public int getNumberOfMines()
     {
-        return numberOfMines;
+        return numeroDeMinas;
     }
 
-    public Cell[][] getCells()
+    public celda[][] getCells()
     {
-        return cells;
+        return celdas;
     }
     
     public int getRows()
     {
-        return rows;
+        return fila;
     }
     
     public int getCols()
     {
-        return cols;
+        return columna;
     }
     //-----------------------------------------//
 
     public void resetBoard()
     {
-        for(int x = 0 ; x < cols ; x++) 
+        for(int x = 0 ; x < columna ; x++) 
         {
-            for(int y = 0 ; y < rows ; y++) 
+            for(int y = 0 ; y < fila ; y++) 
             {
-                cells[x][y].setContent("");                        
+                celdas[x][y].setContent("");                        
             }
         }
     }

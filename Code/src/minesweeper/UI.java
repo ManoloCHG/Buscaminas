@@ -10,56 +10,56 @@ import javax.swing.border.EtchedBorder;
 public class UI extends JFrame
 {
     // The buttons
-    private JButton[][] buttons;
+    private JButton[][] botones;
     
     // Number of Buttons in Grid
-    private int rows;
-    private int cols;
+    private int filas;
+    private int columnas;
     
     // Labels 
-    private JLabel minesLabel;
-    private int mines;
+    private JLabel etiquemina;
+    private int minas;
     
-    private JLabel timePassedLabel;    
-    private Thread timer;
-    private int timePassed;
-    private boolean stopTimer;
+    private JLabel tiempopasadonivel;    
+    private Thread temporizador;
+    private int tiempopasado;
+    private boolean pararTemporizador;
     
     // Frame settings
     private final String FRAME_TITLE = "Minesweeper ~ Developed by Haris Muneer";
     
-    private int FRAME_WIDTH = 520;
-    private int FRAME_HEIGHT = 550;
+    private int Ancho_Cuadro = 520;
+    private int altura_Cuadro = 550;
     private int FRAME_LOC_X = 430;
     private int FRAME_LOC_Y = 50;
 
     // Icons
-    private Icon redMine;
-    private Icon mine;
-    private Icon flag;
-    private Icon tile;
+    private Icon minaroja;
+    private Icon mina;
+    private Icon bandera;
+    private Icon titulo;
     
     
     // Menu Bar and Items
     
     private JMenuBar menuBar;
-    private JMenu gameMenu;
-    private JMenuItem newGame;
-    private JMenuItem statistics;
-    private JMenuItem exit;
+    private JMenu menuJuego;
+    private JMenuItem nuevojuego;
+    private JMenuItem estadística;
+    private JMenuItem salir;
 
     
     
     //---------------------------------------------------------------//
     public UI(int r, int c, int m)
     {                
-        this.rows = r;
-        this.cols = c;
+        this.filas = r;
+        this.columnas = c;
         
-        buttons = new JButton [rows][cols];
+        botones = new JButton [filas][columnas];
 
         // Set frame
-        setSize(FRAME_WIDTH, FRAME_HEIGHT);
+        setSize(Ancho_Cuadro, altura_Cuadro);
         setTitle(FRAME_TITLE);
         setLocation(FRAME_LOC_X, FRAME_LOC_Y);
                
@@ -72,23 +72,23 @@ public class UI extends JFrame
         //----------------GAME BOARD---------------------//
         // Build the "gameBoard".
         gameBoard = new JPanel();
-        gameBoard.setLayout(new GridLayout(rows,cols,0,0));
+        gameBoard.setLayout(new GridLayout(filas,columnas,0,0));
         
-        for( int y=0 ; y<rows ; y++ ) 
+        for( int y=0 ; y<filas ; y++ ) 
         {
-            for( int x=0 ; x<cols ; x++ ) 
+            for( int x=0 ; x<columnas ; x++ ) 
             {
                 // Set button text.
-                buttons[x][y] = new JButton("");
+                botones[x][y] = new JButton("");
 
                 // Set button name (x,y).
-                buttons[x][y].setName(Integer.toString(x) + "," + Integer.toString(y));
-                buttons[x][y].setFont(new Font("Serif", Font.BOLD, 24));
+                botones[x][y].setName(Integer.toString(x) + "," + Integer.toString(y));
+                botones[x][y].setFont(new Font("Serif", Font.BOLD, 24));
                 
-                buttons[x][y].setBorder(BorderFactory.createLineBorder(Color.black, 1, true));
+                botones[x][y].setBorder(BorderFactory.createLineBorder(Color.black, 1, true));
 
                 // Add this button to the gameboard.
-                gameBoard.add(buttons[x][y]);
+                gameBoard.add(botones[x][y]);
             }
         }
         //-----------------------------------------------//
@@ -100,25 +100,25 @@ public class UI extends JFrame
         timePassedPanel.setLayout(new BorderLayout(10,0));
         
         // Initialize the time passed label.
-        this.timePassedLabel = new JLabel ("  0  " , SwingConstants.CENTER);
-        timePassedLabel.setFont(new Font("Serif", Font.BOLD, 20));
+        this.tiempopasadonivel = new JLabel ("  0  " , SwingConstants.CENTER);
+        tiempopasadonivel.setFont(new Font("Serif", Font.BOLD, 20));
                 
         Border loweredetched = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
         
-        timePassedLabel.setBorder(loweredetched);
-        timePassedLabel.setBackground(new Color(110,110,255));
-        timePassedLabel.setForeground(Color.white);
-        timePassedLabel.setOpaque(true);
+        tiempopasadonivel.setBorder(loweredetched);
+        tiempopasadonivel.setBackground(new Color(110,110,255));
+        tiempopasadonivel.setForeground(Color.white);
+        tiempopasadonivel.setOpaque(true);
         
         JLabel iT = new JLabel("",SwingConstants.CENTER);
         iT.setIcon(new ImageIcon(getClass().getResource("/resources/clock.png"))); 
 
         timePassedPanel.add(iT, BorderLayout.WEST);
-        timePassedPanel.add(timePassedLabel, BorderLayout.CENTER);
+        timePassedPanel.add(tiempopasadonivel, BorderLayout.CENTER);
         timePassedPanel.setOpaque(false);
         
-        this.timePassed = 0;
-        this.stopTimer = true;
+        this.tiempopasado = 0;
+        this.pararTemporizador = true;
 
         
         JPanel minesPanel = new JPanel();
@@ -126,19 +126,19 @@ public class UI extends JFrame
         
         
         // Initialize mines label.
-        this.minesLabel = new JLabel ("  0  " , SwingConstants.CENTER);
-        minesLabel.setFont(new Font("Serif", Font.BOLD, 20));
-        minesLabel.setBorder(loweredetched);
-        minesLabel.setBackground(new Color(110,110,255));
-        minesLabel.setForeground(Color.white);
+        this.etiquemina = new JLabel ("  0  " , SwingConstants.CENTER);
+        etiquemina.setFont(new Font("Serif", Font.BOLD, 20));
+        etiquemina.setBorder(loweredetched);
+        etiquemina.setBackground(new Color(110,110,255));
+        etiquemina.setForeground(Color.white);
         
-        minesLabel.setOpaque(true);
+        etiquemina.setOpaque(true);
         setMines(m);
         
         JLabel mT = new JLabel("", SwingConstants.CENTER);
         mT.setIcon(new ImageIcon(getClass().getResource("/resources/mine.png")));
 
-        minesPanel.add(minesLabel, BorderLayout.WEST);
+        minesPanel.add(etiquemina, BorderLayout.WEST);
         minesPanel.add(mT, BorderLayout.CENTER);
         minesPanel.setOpaque(false);
         
@@ -156,21 +156,21 @@ public class UI extends JFrame
         //------------------Menu--------------------------//
         menuBar = new JMenuBar();
         
-        gameMenu = new JMenu("Game");
+        menuJuego = new JMenu("Juego");
          
-        newGame = new JMenuItem("   New Game");
-        statistics = new JMenuItem("   Statistics");
-        exit = new JMenuItem("   Exit");
+        nuevojuego = new JMenuItem("   New Game");
+        estadística = new JMenuItem("   Statistics");
+        salir = new JMenuItem("   Exit");
 
-        newGame.setName("New Game");
-        statistics.setName("Statistics");
-        exit.setName("Exit");
+        nuevojuego.setName("New Game");
+        estadística.setName("Statistics");
+        salir.setName("Exit");
 
-        gameMenu.add(newGame);
-        gameMenu.add(statistics);
-        gameMenu.add(exit);
+        menuJuego.add(nuevojuego);
+        menuJuego.add(estadística);
+        menuJuego.add(salir);
         
-        menuBar.add(gameMenu);                        
+        menuBar.add(menuJuego);                        
         //----------------------------------------------------//
                
         
@@ -207,18 +207,18 @@ public class UI extends JFrame
     // Starts the timer
     public void startTimer()
     {        
-        stopTimer = false;
+        pararTemporizador = false;
         
-        timer = new Thread() {
+        temporizador = new Thread() {
                 @Override
                 public void run()
                 {
-                    while(!stopTimer)
+                    while(!pararTemporizador)
                     {
-                        timePassed++;
+                        tiempopasado++;
 
                         // Update the time passed label.
-                        timePassedLabel.setText("  " + timePassed + "  ");
+                        tiempopasadonivel.setText("  " + tiempopasado + "  ");
 
                         // Wait 1 second.
                         try{
@@ -229,18 +229,18 @@ public class UI extends JFrame
                 }
         };                
 
-       timer.start();
+       temporizador.start();
     }
 
     
     public void interruptTimer()
     {
-        stopTimer = true;
+        pararTemporizador = true;
                 
         try 
         {
-            if (timer!= null)
-                timer.join();
+            if (temporizador!= null)
+                temporizador.join();
         } 
         catch (InterruptedException ex) 
         {
@@ -250,14 +250,14 @@ public class UI extends JFrame
     
     public void resetTimer()
     {
-        timePassed = 0;
-        timePassedLabel.setText("  " + timePassed + "  ");        
+        tiempopasado = 0;
+        tiempopasadonivel.setText("  " + tiempopasado + "  ");        
     }
 
     public void setTimePassed(int t)
     {
-        timePassed = t;
-        timePassedLabel.setText("  " + timePassed + "  ");                
+        tiempopasado = t;
+        tiempopasadonivel.setText("  " + tiempopasado + "  ");                
     }
     
     //-----------------------------------------------------------//
@@ -274,11 +274,11 @@ public class UI extends JFrame
     //Makes buttons clickable
     public void enableAll()
     {
-        for( int x=0 ; x<cols ; x++ ) 
+        for( int x=0 ; x<columnas ; x++ ) 
         {
-            for( int y=0 ; y<rows ; y++ ) 
+            for( int y=0 ; y<filas ; y++ ) 
             {
-                buttons[x][y].setEnabled(true);
+                botones[x][y].setEnabled(true);
             }
         }
     }
@@ -286,11 +286,11 @@ public class UI extends JFrame
     //Makes buttons non-clickable
     public void disableAll()
     {
-        for( int x=0 ; x<cols ; x++ ) 
+        for( int x=0 ; x<columnas ; x++ ) 
         {
-            for( int y=0 ; y<rows ; y++ ) 
+            for( int y=0 ; y<filas ; y++ ) 
             {
-                buttons[x][y].setEnabled(false);
+                botones[x][y].setEnabled(false);
             }
         }
     }
@@ -299,13 +299,13 @@ public class UI extends JFrame
     //Resets the content of all buttons
     public void hideAll()
     {
-        for( int x=0 ; x<cols ; x++ ) 
+        for( int x=0 ; x<columnas ; x++ ) 
         {
-            for( int y=0 ; y<rows ; y++ ) 
+            for( int y=0 ; y<filas ; y++ ) 
             {
-                buttons[x][y].setText("");                
-                buttons[x][y].setBackground(new Color(0,103,200));
-                buttons[x][y].setIcon(tile);                
+                botones[x][y].setText("");                
+                botones[x][y].setBackground(new Color(0,103,200));
+                botones[x][y].setIcon(titulo);                
             }
         }
     }
@@ -313,27 +313,27 @@ public class UI extends JFrame
     
     //---------------SET LISTENERS--------------------------//
     
-    public void setButtonListeners(Game game)
+    public void setButtonListeners(Juego game)
     {
         addWindowListener(game);
     
         // Set listeners for all buttons in the grid in gameBoard
-        for( int x=0 ; x<cols ; x++ ) 
+        for( int x=0 ; x<columnas ; x++ ) 
         {
-            for( int y=0 ; y<rows ; y++ ) 
+            for( int y=0 ; y<filas ; y++ ) 
             {
-                buttons[x][y].addMouseListener(game);
+                botones[x][y].addMouseListener(game);
             }
         }
         
         // Set listeners for menu items in menu bar
-       newGame.addActionListener(game);
-       statistics.addActionListener(game);
-       exit.addActionListener(game);
+       nuevojuego.addActionListener(game);
+       estadística.addActionListener(game);
+       salir.addActionListener(game);
 
-       newGame.setAccelerator(KeyStroke.getKeyStroke('N', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
-       exit.setAccelerator(KeyStroke.getKeyStroke('Q', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
-       statistics.setAccelerator(KeyStroke.getKeyStroke('S', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));       
+       nuevojuego.setAccelerator(KeyStroke.getKeyStroke('N', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
+       salir.setAccelerator(KeyStroke.getKeyStroke('Q', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));
+       estadística.setAccelerator(KeyStroke.getKeyStroke('S', Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()));       
     }
     
     
@@ -341,12 +341,12 @@ public class UI extends JFrame
     
     public JButton[][] getButtons()
     {
-        return buttons;
+        return botones;
     }
     
     public int getTimePassed()
     {
-        return timePassed;
+        return tiempopasado;
     }    
 
 
@@ -370,25 +370,25 @@ public class UI extends JFrame
     
     public void setMines(int m)
     {
-        mines = m;
-        minesLabel.setText("  " + Integer.toString(m) + "  ");
+        minas = m;
+        etiquemina.setText("  " + Integer.toString(m) + "  ");
     }
     
     public void incMines()
     {
-        mines++;
-        setMines(mines);
+        minas++;
+        setMines(minas);
     }
     
     public void decMines()
     {
-        mines--;
-        setMines(mines);
+        minas--;
+        setMines(minas);
     }
     
     public int getMines()
     {
-        return mines;
+        return minas;
     }
             
     //--------------------Related to Icons----------------------------//
@@ -403,23 +403,23 @@ public class UI extends JFrame
     {
        //---------------------Set Icons-----------------------------//
 
-        int bOffset = buttons[0][1].getInsets().left;
-        int bWidth = buttons[0][1].getWidth();
-        int bHeight = buttons[0][1].getHeight();
+        int bOffset = botones[0][1].getInsets().left;
+        int bWidth = botones[0][1].getWidth();
+        int bHeight = botones[0][1].getHeight();
         
         ImageIcon d;
         
         d = new ImageIcon(getClass().getResource("/resources/redmine.png"));                
-        redMine =   resizeIcon(d, bWidth - bOffset, bHeight - bOffset);        
+        minaroja =   resizeIcon(d, bWidth - bOffset, bHeight - bOffset);        
 
         d = new ImageIcon(getClass().getResource("/resources/mine.png"));                
-        mine =   resizeIcon(d, bWidth - bOffset, bHeight - bOffset);        
+        mina =   resizeIcon(d, bWidth - bOffset, bHeight - bOffset);        
         
         d = new ImageIcon(getClass().getResource("/resources/flag.png"));                
-        flag =   resizeIcon(d, bWidth - bOffset, bHeight - bOffset);        
+        bandera =   resizeIcon(d, bWidth - bOffset, bHeight - bOffset);        
         
         d = new ImageIcon(getClass().getResource("/resources/tile.png"));                
-        tile =   resizeIcon(d, bWidth - bOffset, bHeight - bOffset);        
+        titulo =   resizeIcon(d, bWidth - bOffset, bHeight - bOffset);        
                 
         //-------------------------------------------------------//
         
@@ -427,22 +427,22 @@ public class UI extends JFrame
     
     public Icon getIconMine()
     {
-        return mine;
+        return mina;
     }
 
     public Icon getIconRedMine()
     {
-        return redMine;
+        return minaroja;
     }
     
     public Icon getIconFlag()
     {
-        return flag;
+        return bandera;
     }
     
     public Icon getIconTile()
     {
-        return tile;       
+        return titulo;       
     }        
     
     
