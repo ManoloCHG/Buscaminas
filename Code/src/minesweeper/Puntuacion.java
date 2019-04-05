@@ -13,6 +13,12 @@ import java.util.Collections;
 import java.util.Comparator;
 
 
+/**
+ *
+ * @author manolo
+ * @Version Español fianl
+ * esto recoje la informacion de las puntuaciones 
+ */
 public class Puntuacion
 {
     ArrayList<Time> bestTimes;

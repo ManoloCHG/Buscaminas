@@ -20,7 +20,12 @@ import javax.swing.border.TitledBorder;
 import minesweeper.Puntuacion.Time;
 
 
-
+/**
+ *
+ * @author manolo
+ * @Version Español fianl
+ * @see tabla, puntucion, UI, celda, 
+ */
 // This is the main controller class
 public class Juego implements MouseListener, ActionListener, WindowListener
 {

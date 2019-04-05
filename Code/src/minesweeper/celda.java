@@ -1,7 +1,12 @@
 package minesweeper;
 
 
-
+/**
+ *
+ * @author manolo
+ * @Version Español fianl
+ * esto es para las celdas 
+ */
 public class celda 
 {
     private boolean mine;

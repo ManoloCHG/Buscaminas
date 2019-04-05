@@ -9,7 +9,12 @@ import java.sql.Statement;
 import javafx.util.Pair;
 
 
-
+/**
+ *
+ * @author manolo
+ * @Version Español fianl
+ * esto determina la posicion de las minas 
+ */
 public class Tabla 
 {
     private int numeroDeMinas;	

@@ -6,7 +6,12 @@ import java.awt.*;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 
-
+/**
+ *
+ * @author manolo
+ * @Version Español fianl
+ * Este es el cuadro principal
+ */
 public class UI extends JFrame
 {
     // The buttons
@@ -51,6 +56,11 @@ public class UI extends JFrame
     
     
     //---------------------------------------------------------------//
+    /**
+    *
+    * @author manolo
+    * @Version Español fianl
+    */
     public UI(int r, int c, int m)
     {                
         this.filas = r;
@@ -205,6 +215,12 @@ public class UI extends JFrame
     //-----------------------Related to Timer------------------------//
     
     // Starts the timer
+
+    /**
+    *
+    * @author manolo
+    * @Version Español fianl
+    */
     public void startTimer()
     {        
         pararTemporizador = false;
@@ -232,7 +248,11 @@ public class UI extends JFrame
        temporizador.start();
     }
 
-    
+    /**
+    *
+    * @author manolo
+    * @Version Español fianl
+    */
     public void interruptTimer()
     {
         pararTemporizador = true;
@@ -247,13 +267,21 @@ public class UI extends JFrame
 
         }        
     }
-    
+    /**
+    *
+    * @author manolo
+    * @Version Español fianl
+    */
     public void resetTimer()
     {
         tiempopasado = 0;
         tiempopasadonivel.setText("  " + tiempopasado + "  ");        
     }
-
+    /**
+     *
+     * @author manolo
+     * @Version Español fianl
+     */
     public void setTimePassed(int t)
     {
         tiempopasado = t;
@@ -262,7 +290,11 @@ public class UI extends JFrame
     
     //-----------------------------------------------------------//
     
-    
+    /**
+    *
+    * @author manolo
+    * @Version Español fianl
+    */
     public void initGame()
     {
         hideAll();
@@ -272,6 +304,11 @@ public class UI extends JFrame
     //------------------HELPER FUNCTIONS-----------------------//
 
     //Makes buttons clickable
+    /**
+    *
+    * @author manolo
+    * @Version Español fianl
+    */
     public void enableAll()
     {
         for( int x=0 ; x<columnas ; x++ ) 
@@ -284,6 +321,11 @@ public class UI extends JFrame
     }
 
     //Makes buttons non-clickable
+    /**
+    *
+    * @author manolo
+    * @Version Español fianl
+    */
     public void disableAll()
     {
         for( int x=0 ; x<columnas ; x++ ) 
@@ -297,6 +339,11 @@ public class UI extends JFrame
 
 
     //Resets the content of all buttons
+    /**
+    *
+    * @author manolo
+    * @Version Español fianl
+    */
     public void hideAll()
     {
         for( int x=0 ; x<columnas ; x++ ) 
@@ -312,7 +359,11 @@ public class UI extends JFrame
 
     
     //---------------SET LISTENERS--------------------------//
-    
+    /**
+    *
+    * @author manolo
+    * @Version Español fianl
+    */
     public void setButtonListeners(Juego game)
     {
         addWindowListener(game);
@@ -338,12 +389,20 @@ public class UI extends JFrame
     
     
     //-----------------GETTERS AND SETTERS--------------------//
-    
+    /**
+    *
+    * @author manolo
+    * @Version Español fianl
+    */
     public JButton[][] getButtons()
     {
         return botones;
     }
-    
+    /**
+    *
+    * @author manolo
+    * @Version Español fianl
+    */
     public int getTimePassed()
     {
         return tiempopasado;
@@ -351,7 +410,11 @@ public class UI extends JFrame
 
 
     //----------------------SET LOOK------------------------------//
-    
+    /**
+    *
+    * @author manolo
+    * @Version Español fianl
+    */
     public static void setLook(String look)
     {
         try {
@@ -367,25 +430,41 @@ public class UI extends JFrame
     }
 
     //-------------------------------------------------------------//
-    
+    /**
+    *
+    * @author manolo
+    * @Version Español fianl
+    */
     public void setMines(int m)
     {
         minas = m;
         etiquemina.setText("  " + Integer.toString(m) + "  ");
     }
-    
+    /**
+    *
+    * @author manolo
+    * @Version Español fianl
+    */
     public void incMines()
     {
         minas++;
         setMines(minas);
     }
-    
+    /**
+    *
+    * @author manolo
+    * @Version Español fianl
+    */
     public void decMines()
     {
         minas--;
         setMines(minas);
     }
-    
+    /**
+    *
+    * @author manolo
+    * @Version Español fianl
+    */
     public int getMines()
     {
         return minas;
