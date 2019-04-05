@@ -26,7 +26,7 @@ public class UI extends JFrame
     private boolean pararTemporizador;
     
     // Frame settings
-    private final String FRAME_TITLE = "Minesweeper ~ Developed by Haris Muneer";
+    private final String FRAME_TITLE = "Buscaminas ~ Desarollado por Manuel Jose Chacon Guerra";
     
     private int Ancho_Cuadro = 520;
     private int altura_Cuadro = 550;
@@ -158,13 +158,13 @@ public class UI extends JFrame
         
         menuJuego = new JMenu("Juego");
          
-        nuevojuego = new JMenuItem("   New Game");
-        estadística = new JMenuItem("   Statistics");
-        salir = new JMenuItem("   Exit");
+        nuevojuego = new JMenuItem("   Nuevo Juego");
+        estadística = new JMenuItem("   Estadisticas");
+        salir = new JMenuItem("   Salir");
 
-        nuevojuego.setName("New Game");
-        estadística.setName("Statistics");
-        salir.setName("Exit");
+        nuevojuego.setName("Nuevo Juego");
+        estadística.setName("Estadisticas");
+        salir.setName("Salir");
 
         menuJuego.add(nuevojuego);
         menuJuego.add(estadística);

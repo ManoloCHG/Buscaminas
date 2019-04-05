@@ -11,13 +11,10 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.net.URISyntaxException;
-import java.security.CodeSource;
 import java.util.ArrayList;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import java.sql.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.util.Pair;
 import javax.swing.border.TitledBorder;
 import minesweeper.Puntuacion.Time;
@@ -40,7 +37,8 @@ public class Juego implements MouseListener, ActionListener, WindowListener
     //------------------------------------------------------------------//        
 
     /**
-     *
+     *@autor Manolo
+     * @Version final Español
      */
 
     public Juego()
