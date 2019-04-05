@@ -24,7 +24,8 @@ import minesweeper.Puntuacion.Time;
  *
  * @author manolo
  * @Version Español fianl
- * @see tabla, puntucion, UI, celda, 
+ * @see tabla, puntucion, UI, celda
+ * Esta es la clase principal del juego
  */
 // This is the main controller class
 public class Juego implements MouseListener, ActionListener, WindowListener
